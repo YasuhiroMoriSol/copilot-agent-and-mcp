@@ -15,5 +15,10 @@
       "20",
       "21"
     ]
+  },
+  {
+    "username": "uiuser",
+    "password": "uipass",
+    "favorites": []
   }
 ]

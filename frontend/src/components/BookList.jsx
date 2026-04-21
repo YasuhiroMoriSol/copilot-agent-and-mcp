@@ -1,7 +1,7 @@
 
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchBooks } from '../store/booksSlice';
+import { fetchBooks, setSort } from '../store/booksSlice';
 import { addFavorite, fetchFavorites } from '../store/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/BookList.module.css';
@@ -13,15 +13,25 @@ const BookList = () => {
   const token = useAppSelector(state => state.user.token);
   const navigate = useNavigate();
   const favorites = useAppSelector(state => state.favorites.items);
+  const sortBy = useAppSelector(state => state.books.sortBy);
+  const order = useAppSelector(state => state.books.order);
 
   useEffect(() => {
     if (!token) {
       navigate('/');
       return;
     }
-    dispatch(fetchBooks());
+    dispatch(fetchBooks({ sortBy, order }));
     dispatch(fetchFavorites(token));
-  }, [dispatch, token, navigate]);
+  }, [dispatch, token, navigate, sortBy, order]);
+
+  const handleSort = (field) => {
+    let newOrder = 'asc';
+    if (sortBy === field) {
+      newOrder = order === 'asc' ? 'desc' : 'asc';
+    }
+    dispatch(setSort({ sortBy: field, order: newOrder }));
+  };
 
   const handleAddFavorite = async (bookId) => {
     if (!token) {
@@ -35,9 +45,31 @@ const BookList = () => {
   if (status === 'loading') return <div>Loading...</div>;
   if (status === 'failed') return <div>Failed to load books.</div>;
 
+  const sortIndicator = (field) => {
+    if (sortBy !== field) return null;
+    return order === 'asc' ? ' ▲' : ' ▼';
+  };
+
   return (
     <div>
       <h2>Books</h2>
+      <div className={styles.sortControls}>
+        <span className={styles.sortLabel}>Sort by:</span>
+        <button
+          className={styles.sortBtn + (sortBy === 'title' ? ' ' + styles.sortBtnActive : '')}
+          onClick={() => handleSort('title')}
+          aria-pressed={sortBy === 'title'}
+        >
+          Title{sortIndicator('title')}
+        </button>
+        <button
+          className={styles.sortBtn + (sortBy === 'author' ? ' ' + styles.sortBtnActive : '')}
+          onClick={() => handleSort('author')}
+          aria-pressed={sortBy === 'author'}
+        >
+          Author{sortIndicator('author')}
+        </button>
+      </div>
       {books.length === 0 ? (
         <div style={{
           background: '#fff',
