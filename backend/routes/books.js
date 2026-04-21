@@ -8,7 +8,7 @@ function createBooksRouter({ booksFile, readJSON, writeJSON, authenticateToken }
     const { sortBy, order } = req.query;
 
     if (sortBy === 'title' || sortBy === 'author') {
-      books = [...books].sort((a, b) => {
+      books = books.slice().sort((a, b) => {
         const aVal = (a[sortBy] || '').toLowerCase();
         const bVal = (b[sortBy] || '').toLowerCase();
         const cmp = aVal.localeCompare(bVal);

@@ -9,7 +9,7 @@ describe('Book List Sorting', () => {
     cy.get('input[name="username"]').type(user.username);
     cy.get('input[name="password"]').type(user.password);
     cy.get('button#register').click();
-    cy.wait(1000);
+    cy.contains('Registration successful! You can now log in.').should('exist');
     cy.get('input[name="username"]').type(user.username);
     cy.get('input[name="password"]').type(user.password);
     cy.get('button#login').click();
