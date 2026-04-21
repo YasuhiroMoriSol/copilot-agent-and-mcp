@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { fetchFavorites } from '../store/favoritesSlice';
+import { fetchFavorites, clearAllFavorites } from '../store/favoritesSlice';
 import { useNavigate } from 'react-router-dom';
 
 const Favorites = () => {
@@ -17,6 +17,13 @@ const Favorites = () => {
     }
     dispatch(fetchFavorites(token));
   }, [dispatch, token, navigate]);
+
+  // generated-by-copilot: handle clear all favorites with a confirmation dialog
+  const handleClearAll = () => {
+    if (window.confirm('Are you sure you want to clear all your favorite books?')) {
+      dispatch(clearAllFavorites(token));
+    }
+  };
 
   if (status === 'loading') return <div>Loading...</div>;
   if (status === 'failed') return <div>Failed to load favorites.</div>;
@@ -41,13 +48,22 @@ const Favorites = () => {
           </p>
         </div>
       ) : (
-        <ul>
-          {favorites.map(book => (
-            <li key={book.id}>
-              <strong>{book.title}</strong> by {book.author}
-            </li>
-          ))}
-        </ul>
+        <>
+          <button
+            id="clear-all-favorites"
+            onClick={handleClearAll}
+            style={{ marginBottom: '1rem', background: '#e53e3e', color: '#fff', border: 'none', padding: '0.5rem 1.2rem', borderRadius: '4px', cursor: 'pointer' }}
+          >
+            Clear All
+          </button>
+          <ul>
+            {favorites.map(book => (
+              <li key={book.id}>
+                <strong>{book.title}</strong> by {book.author}
+              </li>
+            ))}
+          </ul>
+        </>
       )}
     </div>
   );
